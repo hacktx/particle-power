@@ -23,4 +23,19 @@ DEFAULT_REPRESENTATIONS = {'application/json': output_json}
 api = restful.Api(app)
 api.representations = DEFAULT_REPRESENTATIONS
 
+STRIPS = {
+    "foo": 10,
+    "bar": 10
+}
+
+COLORS = [
+    "red",
+    "blue"
+]
+
+ANIMATIONS = [
+    "cool",
+    "not cool"
+]
+
 import service.resources

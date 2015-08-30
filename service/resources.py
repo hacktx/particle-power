@@ -4,10 +4,7 @@ import json
 from flask import request, abort
 from flask.ext import restful
 from flask.ext.restful import reqparse
-from service import app, api, mongo
-from bson.objectid import ObjectId
-
-INTERVAL = 10  # num seconds between voting sessions
+from service import app, api, mongo, STRIPS, COLORS, ANIMATIONS
 
 class VoteList(restful.Resource):
     def __init__(self, *args, **kwargs):
@@ -18,7 +15,10 @@ class VoteList(restful.Resource):
         super(VoteList, self).__init__()
 
     def get(self, strip_name):
-        d_cutoff = datetime.datetime.utcnow() - datetime.timedelta(seconds=INTERVAL)
+        if strip_name not in STRIPS:
+            abort(400)
+
+        d_cutoff = datetime.datetime.utcnow() - datetime.timedelta(seconds=STRIPS[strip_name])
         votes = mongo.db.votes.aggregate([
             { "$match": {
                 "strip_name": strip_name,
@@ -37,12 +37,20 @@ class VoteList(restful.Resource):
 
     def post(self, strip_name):
         args = self.parser.parse_args()
-        if not args['user_id'] or not args['color'] or not args['animation']:
+
+        if not args['user_id'] or \
+           not args['color'] or \
+           not args['animation']:
             abort(400)
 
         user_id = args['user_id']
         color = args['color']
         animation = args['animation']
+
+        if strip_name not in STRIPS or \
+           color not in COLORS or \
+           animation not in ANIMATIONS:
+            abort(400)
 
         d = datetime.datetime.utcnow()
         d_cutoff = d - datetime.timedelta(seconds=30)
