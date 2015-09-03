@@ -1,3 +1,5 @@
+// Imported from TreeHacks' experimental Slack mentorship system <3
+
 import WebSocket from "ws";
 import Q from "q";
 import co from "co";
