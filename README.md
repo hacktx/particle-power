@@ -1,7 +1,7 @@
 Particle Power
 ==============
 
-Control your wireless LED lighting system with democracy and cute little emojis.
+Control your wireless LED lighting system with the power of democracy and cute little emojis.
 
 ![Voting System](http://i.imgur.com/VKRocBB.png)
 
