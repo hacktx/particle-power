@@ -1,20 +1,22 @@
 Particle Power
 ==============
 
-Twitch plays LED lights. Each authenticated user within Nucleus can vote once per LED strip on the strip color and animation. Each voting cycle lasts 10 seconds, which is probably a terrible, terrible idea.
+Slack plays LED lights.
 
-## Installation
+![Voting System](http://i.imgur.com/VKRocBB.png)
 
-### Mongo Setup
+## Configuration
 
-MongoDB is used to store voting data. If you are testing this application locally, install MongoDB 2.6+ and run the following command to start your database:
+To configure this application to your slack, you'll need to :
 
-`mongod --dbpath <db-storage-path>`
+* Create a new bot and token
+* Create a new slash-command
+* Configure your command to a publically-accessible URL hosting your server:
+  * `http://{hostname}:{bot_port}/commands/{cmd_name}`
+* Create your #ledparty channel
+* Modify `config.js` accordingly
 
-Then, point the application to the database by setting MONGO_URL in your environment or changing the default in `service/__init__.py`.
+### Running the Server
 
-### Running the Application
-
-`sudo pip install -r requirements.txt` 
-
-`python runserver.py`
+1. `npm install`
+2. `node index.js`
