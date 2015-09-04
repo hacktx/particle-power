@@ -36,6 +36,10 @@ api.on("command", function*(data, res) {
 
     strips[strip_name] = true;
 
+    if (data.channel_name != vote_channel.substring(1)) {
+        res.send("Vote started in " + vote_channel + ".");
+    }
+
     // Initiate the vote.
     var post = yield api.slackApi("chat.postMessage", {
         channel: vote_channel,
