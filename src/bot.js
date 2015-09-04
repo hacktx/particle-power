@@ -11,6 +11,7 @@ import {
     animations,
     available_strips_message,
     strips,
+    vote_emojis,
     vote_prompt,
 } from "../led_config.js";
 
@@ -39,14 +40,20 @@ api.on("command", function*(data, res) {
     var post = yield api.slackApi("chat.postMessage", {
         channel: vote_channel,
         as_user: true,
-        text: "Voting has started for *" + strip_name + "*." + vote_prompt,
+        text: "Voting has started for *" + strip_name + "*.",
+    });
+
+    var prompt = yield api.slackApi("chat.postMessage", {
+        channel: vote_channel,
+        as_user: true,
+        text: vote_prompt,
     });
 
     // Add reactions for each animation.
     for (var animation in animations) {
         yield api.slackApi("reactions.add", {
-            channel: post.channel,
-            timestamp: post.ts,
+            channel: prompt.channel,
+            timestamp: prompt.ts,
             name: animations[animation],
         });
     }
@@ -59,7 +66,7 @@ api.on("command", function*(data, res) {
         update_timer(strip_name, post, time_left);
 
     }, function() {
-        update_strip(strip_name, post);
+        update_strip(strip_name, post, prompt);
 
     }, 1000, num_reps + 1);
 
@@ -80,26 +87,31 @@ function update_timer(strip_name, post, time_left) {
     api.slackApi("chat.update", {
         channel: post.channel,
         ts: post.ts,
-        text: "Voting has started for *" + strip_name + "*. [" + time_left + "s]" + vote_prompt,
+        text: "Voting has started for *" + strip_name + "*. [" + time_left + "s]",
     });
 }
 
-function update_strip(strip_name, post) {
+function update_strip(strip_name, post, prompt) {
     strips[strip_name] = false;
 
     // Retrieve all reactions
     api.slackApi("reactions.get", {
-        channel: post.channel,
-        timestamp: post.ts,
+        channel: prompt.channel,
+        timestamp: prompt.ts,
         full: true,
     }).then((res) => {
+
+        api.slackApi("chat.delete", {
+            channel: prompt.channel,
+            ts: prompt.ts,
+        });
 
         var reactions = res.message.reactions;
 
         // Find the most popular valid emoji
         var high = 0;
-        for (var i = 0; i < reactions.length; i++) {
-            if (reactions[i].count > reactions[high].count && reactions[i].name in vote_emojis) {
+        for (var i = 1; i < reactions.length; i++) {
+            if (reactions[i].count > reactions[high].count && vote_emojis.indexOf(reactions[i].name) != -1) {
                 high = i;
             }
         }
