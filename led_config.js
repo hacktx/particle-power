@@ -19,14 +19,17 @@ exports.vote_emojis = Object.keys(exports.animations).map((anim) => exports.anim
 
 // Mapping of strips to polling status
 exports.strips = {
-    "ballroom_entrance": false,
-    "legislative_lounge": false,
-    "black_box": false,
-    "narnia": false,
+    "ballroom": false,
+    "legislative": false,
+    "blackbox": false,
+    "executive": false,
     "balconyb": false,
     "balconyc": false,
-    "hack_room": false,
+    "hackroom": false,
 };
 
+exports.second_floor = ["ballroom", "legislative", "blackbox"];
+exports.third_floor = ["executive", "balconyb", "balconyc", "hackroom"];
+
 // Generate list of valid strips
-exports.available_strips_message = "Available Strips: [" + Object.keys(exports.strips).join(", ") + "]";
+exports.available_strips_message = "Available Strips:\nSecond Floor: [" + exports.second_floor.join(", ") + "]\nThird Floor: [" + exports.third_floor.join(", ") + "]";
