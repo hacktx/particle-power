@@ -11,7 +11,7 @@ exports.animations = {
 // Generate voting prompt
 exports.vote_prompt = "";
 for (var animation in exports.animations) {
-    exports.vote_prompt += "\n:" + exports.animations[animation] + ": " + animation;
+    exports.vote_prompt += "\n>:" + exports.animations[animation] + ": " + animation;
 }
 
 // Generate list of valid voting emojis
