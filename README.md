@@ -5,6 +5,14 @@ Control your wireless LED lighting system with the power of democracy and cute l
 
 ![Voting System](http://i.imgur.com/jr3Omni.png)
 
+## Contributing
+
+Have an idea for a little extra spice in our lighting system? A new animation, maybe? Check out our controller logic at [firmware/led-show.ino](firmware/led-show.ino).
+
+Have a bug fix or an entirely new backend feature?! Check out the bot server at [src/bot.js](src/bot.js).
+
+Submit a pull request or open up an issue, and we'll work with you to get it into our system <3
+
 ## Configuration
 
 To configure this application to your slack, you'll need to :
