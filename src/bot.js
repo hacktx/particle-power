@@ -5,6 +5,8 @@ import {
     bot_token,
     vote_channel,
     vote_duration,
+    spark_user,
+    spark_pw,
 } from "../config.js";
 
 import {
@@ -14,6 +16,14 @@ import {
     vote_emojis,
     vote_prompt,
 } from "../led_config.js";
+
+var spark = require('spark');
+spark.login({ username: spark_user, password: spark_pw }, function(err, body) {
+  if (err) {
+      console.log("Failed to login:", body);
+      exit(0);
+  }
+});
 
 var api = new Slack(bot_token);
 api.listenForCommands("/commands", bot_port);
@@ -29,12 +39,12 @@ api.on("command", function*(data, res) {
 
     // Check whether a vote already exists for the strip.
     var strip_name = data.text;
-    if (strips[strip_name]) {
+    if (strips[strip_name].voting) {
         res.send("*" + strip_name + "* is already being voted on.");
         return;
     }
 
-    strips[strip_name] = true;
+    strips[strip_name].voting = true;
 
     if (data.channel_name != vote_channel.substring(1)) {
         res.send("Vote started in " + vote_channel + ".");
@@ -96,7 +106,7 @@ function update_timer(strip_name, post, time_left) {
 }
 
 function update_strip(strip_name, post, prompt) {
-    strips[strip_name] = false;
+    strips[strip_name].voting = false;
 
     // Retrieve all reactions
     api.slackApi("reactions.get", {
@@ -142,7 +152,17 @@ function update_strip(strip_name, post, prompt) {
                     text: "[:" + emoji + ": ENDED] *" + strip_name + "* set to *" + animation + "*",
                 });
 
-                // TODO: Update Particle
+                spark.getDevice(strips[strip_name].id, function(err, device) {
+                  if (err) {
+                    console.log("Failed to get device by id: " + strips[strip_name].id);
+                  } else {
+                    device.callFunction("pattern", animation, function(err, data) {
+                      if (err) {
+                        console.log("Failed to call function pattern.");
+                      }
+                    });
+                  }                   
+                });
             }
         }
     }).done();
